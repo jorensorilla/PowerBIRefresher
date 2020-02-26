@@ -1,0 +1,19 @@
+{
+    "manifest_version": 2,
+    "name": "Power BI Refresher",
+    "description": "Refreshes the dashboard on a set interval.",
+    "version": "0.1",
+    "content_scripts": [ 
+        {
+            "matches": ["https://app.powerbi.com/groups/me/reports/*/ReportSection"],
+            "js": ["content.js"]
+        } 
+    ],
+    "icons": {
+        "16": "assets/arrow-refresh-icon-16.png",
+        "32": "assets/arrow-refresh-icon-32.png",
+        "48": "assets/arrow-refresh-icon-48.png",
+        "128": "assets/arrow-refresh-icon-128.png"
+    }   
+    
+}
