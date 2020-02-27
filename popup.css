@@ -1,4 +1,8 @@
-.popup-form {
-    width: 250px;
+#popup-form {
+    width: 300px;
     padding: 15px;
 } 
+
+#save-button {
+    width: 75px;
+}

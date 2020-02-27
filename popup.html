@@ -4,28 +4,54 @@
     <head>
         <link href="bootstrap.min.css" rel="stylesheet"></link>
         <link href="popup.css" rel="stylesheet"></link>
+        <script src="popup.js"></script>
     </head>
     
     <body>
+       
+          <form id="popup-form" class="needs-validation">
+              
+              
+              <div class="row">
+                <div class="form-group">
+                  <label for="url">Power BI Report Link</label>
+                  <input type="text" class="form-control" id="url" required="">
+                  <div class="invalid-feedback">
+                    Please input a valid URL.
+                  </div>
+                </div>
 
-        <form class="popup-form">
-            <div class="form-group">
-              <label for="exampleInputEmail1">Email address</label>
-              <input type="email" class="form-control" id="exampleInputEmail1" aria-describedby="emailHelp">
-              <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
-            </div>
-            <div class="form-group">
-              <label for="exampleInputPassword1">Password</label>
-              <input type="password" class="form-control" id="exampleInputPassword1">
-            </div>
-            <div class="form-group form-check">
-              <input type="checkbox" class="form-check-input" id="exampleCheck1">
-              <label class="form-check-label" for="exampleCheck1">Check me out</label>
-            </div>
-            <button type="submit" class="btn btn-primary">Submit</button>
-        </form>
-        <script type="text/javascript" src="jquery-3.4.1.min.js"></script>
-        <script type="text/javascript" src="bootstrap.min.js"></script>
+              </div>
+              
+              <div class="row">
+                  <div class="form-group col-8">
+                    <label for="refresh-interval">Refresh Interval</label>
+                    <input type="number" class="form-control" min="0" id="refresh-interval" required="">
+                    
+                    <div class="invalid-feedback">
+                      Please input a valid interval.
+                    </div>
+
+                  </div>
+                  <div class="form-group col-4">
+                    <label for="interval-category"></label>
+                    <select class="custom-select form-control" id="interval-category" required="">
+                      <option value="">seconds</option>
+                      <option>minutes</option>
+                      <option>hours</option>
+                    </select>
+
+                  </div>
+                
+              </div>
+              
+              <button type="submit" class="btn btn-primary" id="save-button">Save</button>
+          </form>
+        
+
+        <script src="jquery-3.4.1.min.js"></script>
+        <script src="bootstrap.min.js"></script>
+        
     </body>
     
 
