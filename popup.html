@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 
     <head>
         <link href="bootstrap.min.css" rel="stylesheet"></link>
@@ -8,12 +8,12 @@
     </head>
     
     <body>
-       
+          <h1 class="align-middle"></h1>
           <form id="popup-form" class="needs-validation">
               
               
               <div class="row">
-                <div class="form-group">
+                <div class="form-group col-12">
                   <label for="url">Power BI Report Link</label>
                   <input type="text" class="form-control" id="url" required="">
                   <div class="invalid-feedback">
@@ -24,17 +24,17 @@
               </div>
               
               <div class="row">
-                  <div class="form-group col-8">
+                  <div class="form-group col-7">
                     <label for="refresh-interval">Refresh Interval</label>
-                    <input type="number" class="form-control" min="0" id="refresh-interval" required="">
+                    <input type="number" class="form-control" min="1" id="refresh-interval" required="">
                     
                     <div class="invalid-feedback">
                       Please input a valid interval.
                     </div>
 
                   </div>
-                  <div class="form-group col-4">
-                    <label for="interval-category"></label>
+                  <div class="form-group col-5">
+                    <label for="interval-category">Unit</label>
                     <select class="custom-select form-control" id="interval-category" required="">
                       <option value="">seconds</option>
                       <option>minutes</option>
@@ -45,7 +45,7 @@
                 
               </div>
               
-              <button type="submit" class="btn btn-primary" id="save-button">Save</button>
+              <button type="submit" class="btn btn-primary btn-sm" id="save-button">Save</button>
           </form>
         
 

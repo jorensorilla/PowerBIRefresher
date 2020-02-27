@@ -2,7 +2,8 @@ function saveHandler() {
     var url = document.getElementById("url").value
     var interval = document.getElementById("url").value
     chrome.runtime.sendMessage({directive:'save-event', reporturl: url, reportinterval: interval }, function(){
-        this.close();
+        console.log("saveHandler");
+        
     });
 }
 
