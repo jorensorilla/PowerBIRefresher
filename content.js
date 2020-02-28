@@ -1,9 +1,24 @@
-// content.js
+
 var pbiAutoRefresh;
 var refreshInterval = 5000;
 
-/* Click refresh */
+
+// refresh once
 function clickRefresh() {
+    
+    if(document.fullscreenEnabled) {
+        $("button.exitFullScreenBtn").click();
+    }
+    $("#moreActionsBtn").click();
+    $("div button:contains('Refresh')").click();
+    $("#visualizationOptionsMenuBtn").click();
+    $("div button:contains('Full screen')").click();
+    
+    
+}
+
+// Start auto refresh 
+function startAutoRefresh() {
    
     $("button.exitFullScreenBtn").click();
     $("#moreActionsBtn").click();
@@ -13,10 +28,10 @@ function clickRefresh() {
     
     
     console.log("Logging!");
-    pbiAutoRefresh = setTimeout(clickRefresh, refreshInterval);   
+    pbiAutoRefresh = setTimeout(startAutoRefresh, refreshInterval);   
 }
 
-/* Stop automatically refreshing */
+// Stop automatically refreshing 
 function stopRefresh(){
     clearInterval(pbiAutoRefresh)
 }

@@ -2,51 +2,72 @@
 <html lang="en">
 
     <head>
-        <link href="bootstrap.min.css" rel="stylesheet"></link>
-        <link href="popup.css" rel="stylesheet"></link>
+        <link href="bootstrap.min.css" rel="stylesheet">
+        <link href="popup.css" rel="stylesheet">
         <script src="popup.js"></script>
     </head>
     
     <body>
-          <h1 class="align-middle"></h1>
-          <form id="popup-form" class="needs-validation">
-              
-              
-              <div class="row">
-                <div class="form-group col-12">
-                  <label for="url">Power BI Report Link</label>
-                  <input type="text" class="form-control" id="url" required="">
-                  <div class="invalid-feedback">
-                    Please input a valid URL.
-                  </div>
-                </div>
-
-              </div>
-              
-              <div class="row">
-                  <div class="form-group col-7">
-                    <label for="refresh-interval">Refresh Interval</label>
-                    <input type="number" class="form-control" min="1" id="refresh-interval" required="">
-                    
-                    <div class="invalid-feedback">
-                      Please input a valid interval.
-                    </div>
-
-                  </div>
-                  <div class="form-group col-5">
-                    <label for="interval-category">Unit</label>
-                    <select class="custom-select form-control" id="interval-category" required="">
-                      <option value="">seconds</option>
-                      <option>minutes</option>
-                      <option>hours</option>
-                    </select>
-
-                  </div>
+          <div class="container p-2">
+            <form id="popup-form" >
                 
-              </div>
-              
-              <button type="submit" class="btn btn-primary btn-sm" id="save-button">Save</button>
-          </form>
+                
+                <!-- <div class="row">
+                  <div class="form-group col-12 col-sm-12">
+                    <label for="url">Power BI Report Link</label>
+                    <input type="url" class="form-control" id="url" required>
+                    <div class="invalid-feedback">
+                      Please input a valid URL.
+                    </div>
+                  </div>
+
+                </div> -->
+
+                <div class="row">
+                  <div class="form-group col-12 col-sm-12">
+                    <label for="interval-radio">Refresh Type</label>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="interval-radio" value="interval">
+                      <label class="form-check-label" for="interval-radio">By Interval</label>
+                    </div>
+                    <div class="form-check form-check-inline">
+                      <input class="form-check-input" type="radio" id="time-radio" value="time">
+                      <label class="form-check-label" for="time-radio">By Time</label>
+                    </div>
+                  </div>
+
+                </div>
+                
+                <div class="row">
+                    <div class="form-group col-7">
+                      <label for="refresh-interval">Refresh Interval</label>
+                      <input type="number" class="form-control" min="1" id="refresh-interval" placeholder="Enter interval between refreshes" required>
+                      
+                      <div class="invalid-feedback">
+                        Please input a valid interval.
+                      </div>
+
+                    </div>
+                    <div class="form-group col-5">
+                      <label for="interval-category">Unit</label>
+                      <select class="custom-select form-control" id="interval-category" required>
+                        <option value=""></option>
+                        <option value="seconds">seconds</option>
+                        <option value="minutes">minutes</option>
+                        <option value="hours">hours</option>
+                      </select>
+                      <div class="invalid-feedback">
+                        Please select a value.
+                      </div>
+
+                    </div>
+                  
+                </div>
+                
+                <button type="submit" class="btn btn-primary btn-sm" id="save-button">Save</button>
+                <button type="submit" class="btn btn-primary btn-sm btn-dark" id="refresh-button">Refresh Now</button>
+            </form>
+          </div>
         
 
         <script src="jquery-3.4.1.min.js"></script>
