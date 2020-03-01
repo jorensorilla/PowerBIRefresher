@@ -5,16 +5,15 @@
     "version": "0.1",
     "content_scripts": [ 
         {
-            "matches": ["https://app.powerbi.com/groups/me/apps/*/reports/*"],
+            "matches":["https://app.powerbi.com/groups/me/apps/*/reports/*"],
             "js": ["jquery-3.4.1.min.js","content.js"]
         } 
     ],
-    "permissions": ["webNavigation","storage"],
+    "permissions": ["declarativeContent","activeTab","webNavigation","storage"],
     "background": {
-      "scripts": ["background.js"],
-      "persistent": false
+      "scripts": ["background.js"]
     },
-    "page_action":{
+    "browser_action":{
         "default_title": "Power BI Refresher",
         "browser_style": true,
         "default_popup":"popup.html",

@@ -10,7 +10,7 @@
     
     <body>
           <div class="container p-2">
-            <form id="popup-form" >
+            <form id="popup-form" class="needs-validation" novalidate>
                 
                 
                 <!-- <div class="row">
@@ -46,7 +46,7 @@
                 </div>
                 
                 <div id="interval-group" class="row">
-                    <div class="form-group col-7">
+                    <div class="form-group col-8">
                       <label for="refresh-interval">Refresh Interval</label>
                       <input type="number" class="form-control" min="1" id="refresh-interval" placeholder="Enter interval between refreshes" required>
                       
@@ -55,7 +55,7 @@
                       </div>
 
                     </div>
-                    <div class="form-group col-5">
+                    <div class="form-group col-4">
                       <label for="interval-category">Unit</label>
                       <select class="custom-select form-control" id="interval-category" required>
                         <option value=""></option>
@@ -77,17 +77,16 @@
                    
                     <label for="time-field">Refresh Time</label>
                     <input id="time-field" type='text' class="form-control timepicker" />
-                    <span class="input-group-addon">
-                        <span class="glyphicon glyphicon-time"></span>
-                    </span>
-                
+                    <div class="invalid-feedback">
+                      Please select a time.
+                    </div>
                   </div>  
                   
                 
               </div>
                 
-                <button type="submit" class="btn btn-primary btn-sm" id="save-button">Save</button>
-                <button type="submit" class="btn btn-primary btn-sm btn-dark" id="refresh-button">Refresh Now</button>
+              <button type="submit" class="btn btn-primary btn-sm" id="save-button">Save</button>
+              <button type="button" class="btn btn-primary btn-sm btn-dark" id="refresh-button">Refresh Now</button>
             </form>
           </div>
         
