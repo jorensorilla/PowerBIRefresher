@@ -3,6 +3,38 @@ var pbiAutoRefresh;
 var refreshInterval = 5000;
 
 
+function convertTo24hrFormat(time){
+    var isPM = time.match('PM')?true:false;
+    var timeArr = time.split(':')
+    var hours;
+
+    var seconds = timeArr[1].split(' ')[0];
+    
+    if(isPM) {
+    		hours = parseInt(timeArr[0])
+    		if (hours == 12) {
+        	hours = '12';
+        } else {
+        	hours+=12;
+        }
+         
+        
+    } else {
+        hours = parseInt(timeArr[0])
+        if (hours == 12) {
+        	hours = '00';
+        }
+    }
+   
+    if (hours.toString().length === 1){
+    	 hours='0' + hours;
+    }
+    
+    return hours+':'+seconds+':00'
+    
+
+}
+
 // refresh once
 function clickRefresh() {
     
@@ -89,8 +121,21 @@ function refreshHandler() {
 
 document.addEventListener('DOMContentLoaded', function () {
     
-    
-    chrome.storage.local.get(['refreshtype','interval','unit', 'time'], function (config) { 
+    // chrome.runtime.sendMessage({directive:'on-load-event'}, function(config) {
+    //     if(config.refreshtype == 'interval') {
+    //         $('#interval-radio').prop('checked', true);
+    //         $('#refresh-interval').val(config.interval);
+    //         $('#interval-category').val(config.unit);
+    //         $('#interval-group').show();
+    //         $('#time-group').hide();
+    //     } else if (config.refreshtype == 'time'){
+    //         $('#time-radio').prop('checked', true);
+    //         $('#time-field').val(config.time);
+    //         $('#time-group').show();
+    //         $('#interval-group').hide();
+    //     }
+    // });
+    chrome.runtime.sendMessage({directive:'on-load-event'}, function (config) { 
         
         if(config.refreshtype == 'interval') {
             $('#interval-radio').prop('checked', true);
@@ -103,6 +148,9 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#time-field').val(config.time);
             $('#time-group').show();
             $('#interval-group').hide();
+        }else { 
+            $('#interval-group').hide();
+            $('#time-group').hide();
         }
 
         
@@ -123,9 +171,11 @@ document.addEventListener('DOMContentLoaded', function () {
     $('#save-button').click(saveHandler);
 
     $('#refresh-button').click(function() {
-        
+        clickRefresh();
         
     });
+
+ 
 
 
     $('input.timepicker').timepicker({
@@ -149,7 +199,21 @@ document.addEventListener('DOMContentLoaded', function () {
 
 
 
+chrome.runtime.onMessage.addListener(
+    function(request, sender, sendResponse) {
+        
+        switch (request.directive) {
+            case "save-event":
+                
+                
+            default:
+                // when request directive doesn't match
+                console.log("Unmatched request of '" + request + "' from script to background.js from " + sender);
+        }
 
+       
+    }
+);
 
 
 

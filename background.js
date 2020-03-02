@@ -1,4 +1,8 @@
-
+var refreshType;
+var currInterval;
+var currUnit;
+var currTime;
+var runningTime;
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         
@@ -18,12 +22,30 @@ chrome.runtime.onMessage.addListener(
                 }
                 
                 sendResponse({}); // sending back empty response to sender
-                break;
+                return true;
             case "on-load-event":
-                
-                break;
-            case "refresh-event":
+                // chrome.storage.local.get("refreshtype", function(response) {
+                    
+                //     if(response == false) {
+                //         chrome.storage.local.set({"refreshtype":"interval"});
+                //         chrome.storage.local.set({"interval":5000});
+                //         chrome.storage.local.set({"unit":"seconds"});
+                //     }
 
+                //     sendResponse({refreshtype: "interval", interval:5000, unit:"seconds"});
+                // });
+                chrome.storage.local.get(['refreshtype','interval','unit', 'time'], function (config) { 
+    
+                        refreshType = config.refreshtype;
+                        currInterval = config.interval;
+                        currUnit = config.unit;
+                        currTime = config.time;
+                        sendResponse(config);
+                });
+                
+                return true;
+            case "start-event":
+                
                 break;
             default:
                 // when request directive doesn't match
@@ -44,3 +66,4 @@ chrome.runtime.onInstalled.addListener(function() {
       ]);
     });
   });
+
