@@ -1,7 +1,11 @@
 
 var pbiAutoRefresh;
-var refreshInterval = 5000;
+var refreshInterval = 5000; // default
 
+window.onerror = function(message, url, lineNumber) {  
+    // code to execute on an error  
+    return true; // prevents browser error messages  
+};
 
 function convertTo24hrFormat(time){
     var isPM = time.match('PM')?true:false;
@@ -38,28 +42,41 @@ function convertTo24hrFormat(time){
 // refresh once
 function clickRefresh() {
     
-    if(document.fullscreenEnabled) {
-        $("button.exitFullScreenBtn").click();
-    }
-    $("#moreActionsBtn").click();
-    $("div button:contains('Refresh')").click();
-    $("#visualizationOptionsMenuBtn").click();
-    $("div button:contains('Full screen')").click();
-    
-    
-}
-
-// Start auto refresh 
-function startAutoRefresh() {
-   
+  
     $("button.exitFullScreenBtn").click();
     $("#moreActionsBtn").click();
     $("div button:contains('Refresh')").click();
     $("#visualizationOptionsMenuBtn").click();
-    $("div button:contains('Full screen')").click();
+    setTimeout($("div button:contains('Full screen')").click(), 1000);
+
+}
+
+function setRefreshValue() {
+    chrome.runtime.sendMessage({directive:'get-config'}, function (config) { 
+        
+        if(config.refreshtype == 'interval') {
+            refreshInterval = config.interval;
+            console.log("Interval set to: " + refreshInterval);
+        } else if (config.refreshtype == 'time'){
+            //to do
+        }
+        
+        
+    });
+}
+
+// Start auto refresh 
+function startAutoRefresh() {
+    setRefreshValue();
+    clickRefresh();
+
+    var today = new Date();
+    var date = today.getFullYear()+'-'+(today.getMonth()+1)+'-'+today.getDate();
+    var time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+    var dateTime = date+' '+time;
     
-    
-    console.log("Logging!");
+    console.log("Refreshed at " + dateTime);
+
     pbiAutoRefresh = setTimeout(startAutoRefresh, refreshInterval);   
 }
 
@@ -83,7 +100,7 @@ function saveHandler() {
             case "minutes": interval_in_ms = parseInt(interval*1000*60);
                             break;
             case "hours": interval_in_ms = parseInt(interval*1000*60*60);  
-                        break;
+                            break;
             default:
                 alert("Interval category invalid!");
         }
@@ -103,7 +120,7 @@ function saveHandler() {
          
         chrome.runtime.sendMessage(message);
     } else {
-        
+        // prevent default behaviour of browser 
         event.preventDefault();
         //event.stopPropagation();
         
@@ -139,10 +156,18 @@ document.addEventListener('DOMContentLoaded', function () {
         
         if(config.refreshtype == 'interval') {
             $('#interval-radio').prop('checked', true);
-            $('#refresh-interval').val(config.interval);
+
             $('#interval-category').val(config.unit);
+            switch(config.unit) {
+                case "seconds": $('#refresh-interval').val (config.interval/1000); break;
+                case "minutes": $('#refresh-interval').val (config.interval/60000); break;
+                case "hours": $('#refresh-interval').val(config.interval/(60000*60)); break;
+                default: $('#refresh-interval').val(config.interval); 
+            }
+
             $('#interval-group').show();
             $('#time-group').hide();
+           
         } else if (config.refreshtype == 'time'){
             $('#time-radio').prop('checked', true);
             $('#time-field').val(config.time);
@@ -152,7 +177,7 @@ document.addEventListener('DOMContentLoaded', function () {
             $('#interval-group').hide();
             $('#time-group').hide();
         }
-
+        
         
     });
 
@@ -170,12 +195,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('#save-button').click(saveHandler);
 
-    $('#refresh-button').click(function() {
-        clickRefresh();
-        
-    });
-
- 
+    $('#stop-button').click(stopRefresh);
 
 
     $('input.timepicker').timepicker({
@@ -190,30 +210,18 @@ document.addEventListener('DOMContentLoaded', function () {
         scrollbar: true
     });
    
+
     console.log("popup.js add event listener");
 })
 
 
+startAutoRefresh();
 
 
 
 
 
-chrome.runtime.onMessage.addListener(
-    function(request, sender, sendResponse) {
-        
-        switch (request.directive) {
-            case "save-event":
-                
-                
-            default:
-                // when request directive doesn't match
-                console.log("Unmatched request of '" + request + "' from script to background.js from " + sender);
-        }
 
-       
-    }
-);
 
 
 

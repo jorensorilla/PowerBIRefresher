@@ -42,10 +42,13 @@ chrome.runtime.onMessage.addListener(
                         currTime = config.time;
                         sendResponse(config);
                 });
-                
+            case "get-config":
+                chrome.storage.local.get(['refreshtype','interval','unit', 'time'], function (config) { 
+                    sendResponse(config);
+                });
                 return true;
             case "start-event":
-                
+                sendResponse({});
                 break;
             default:
                 // when request directive doesn't match
@@ -60,7 +63,7 @@ chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       chrome.declarativeContent.onPageChanged.addRules([
         {
-          conditions: [new chrome.declarativeContent.PageStateMatcher({pageUrl:{hostEquals: 'https://app.powerbi.com/groups/me/apps/*/reports/*'}})],
+          conditions: [new chrome.declarativeContent.PageStateMatcher({pageUrl:{hostEquals: 'app.powerbi.com', schemes:['https']}})],
           actions: [new chrome.declarativeContent.ShowAction()]
         }
       ]);
