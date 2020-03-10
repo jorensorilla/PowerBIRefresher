@@ -48,7 +48,7 @@
                 <div id="interval-group" class="row">
                     <div class="form-group col-8">
                       <label for="refresh-interval">Refresh Interval</label>
-                      <input type="number" class="form-control" min="1" id="refresh-interval" placeholder="Enter interval between refreshes" required>
+                      <input type="number" class="form-control" min="1" id="refresh-interval" placeholder="Enter interval between refreshes" >
                       
                       <div class="invalid-feedback">
                         Please input a valid interval.
@@ -57,7 +57,7 @@
                     </div>
                     <div class="form-group col-4">
                       <label for="interval-category">Unit</label>
-                      <select class="custom-select form-control" id="interval-category" required>
+                      <select class="custom-select form-control" id="interval-category" >
                         <option value=""></option>
                         <option value="seconds">seconds</option>
                         <option value="minutes">minutes</option>
@@ -86,7 +86,7 @@
               </div>
                 
               <button type="submit" class="btn btn-primary btn-sm " id="save-button">Save</button>
-              <button type="button" class="btn btn-primary btn-sm btn-dark" id="stop-button">Stop</button>
+              <button type="button" class="btn btn-primary btn-sm btn-dark" id="stop-button" name="stop-button">Stop</button>
               
             </form>
           </div>

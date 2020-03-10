@@ -9,7 +9,7 @@
             "js": ["jquery-3.4.1.min.js","content.js"]
         } 
     ],
-    "permissions": ["declarativeContent","activeTab","webNavigation","storage"],
+    "permissions": ["declarativeContent","tabs","activeTab","webNavigation","storage"],
     "background": {
       "scripts": ["background.js"]
     },

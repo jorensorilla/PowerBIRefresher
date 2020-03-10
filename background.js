@@ -1,8 +1,4 @@
-var refreshType;
-var currInterval;
-var currUnit;
-var currTime;
-var runningTime;
+var timeout_id;
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         
@@ -18,11 +14,12 @@ chrome.runtime.onMessage.addListener(
                     
                     chrome.storage.local.set({"refreshtype": request.refreshtype});
                     chrome.storage.local.set({"time":request.time});
+                    chrome.storage.local.set({"text":request.text});
 
                 }
                 
                 sendResponse({}); // sending back empty response to sender
-                return true;
+                break;
             case "on-load-event":
                 // chrome.storage.local.get("refreshtype", function(response) {
                     
@@ -34,7 +31,7 @@ chrome.runtime.onMessage.addListener(
 
                 //     sendResponse({refreshtype: "interval", interval:5000, unit:"seconds"});
                 // });
-                chrome.storage.local.get(['refreshtype','interval','unit', 'time'], function (config) { 
+                chrome.storage.local.get(['refreshtype','interval','unit', 'time', 'text'], function (config) { 
     
                         refreshType = config.refreshtype;
                         currInterval = config.interval;
@@ -42,20 +39,26 @@ chrome.runtime.onMessage.addListener(
                         currTime = config.time;
                         sendResponse(config);
                 });
+                break;
             case "get-config":
-                chrome.storage.local.get(['refreshtype','interval','unit', 'time'], function (config) { 
+                chrome.storage.local.get(['refreshtype','interval','unit', 'time', 'text'], function (config) { 
                     sendResponse(config);
                 });
-                return true;
-            case "start-event":
+                break;
+            case "refresh-event":
+                timeout_id=request.timeout_id;
                 sendResponse({});
+                break;
+            case "stop-event":
+                console.log("From background js : " + timeout_id);
+                sendResponse({timeout_id:this.timeout_id});
                 break;
             default:
                 // when request directive doesn't match
-                console.log("Unmatched request of '" + request + "' from script to background.js from " + sender);
+                console.log("Unmatched request of '" + request.directive + "' from script to background.js from " + sender);
         }
 
-       
+        return true;
     }
 );
 

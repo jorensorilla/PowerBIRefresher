@@ -1,5 +1,5 @@
 
-var pbiAutoRefresh;
+
 var refreshInterval = 5000; // default
 
 window.onerror = function(message, url, lineNumber) {  
@@ -7,7 +7,7 @@ window.onerror = function(message, url, lineNumber) {
     return true; // prevents browser error messages  
 };
 
-function convertTo24hrFormat(time){
+function convertToDate(time){
     var isPM = time.match('PM')?true:false;
     var timeArr = time.split(':')
     var hours;
@@ -33,21 +33,20 @@ function convertTo24hrFormat(time){
     if (hours.toString().length === 1){
     	 hours='0' + hours;
     }
-    
-    return hours+':'+seconds+':00'
+    var today = new Date();
+    return new Date(today.getFullYear(), today.getMonth(), today.getDate(), hours, seconds, 0)
     
 
 }
 
 // refresh once
 function clickRefresh() {
-    
-  
+
     $("button.exitFullScreenBtn").click();
     $("#moreActionsBtn").click();
     $("div button:contains('Refresh')").click();
     $("#visualizationOptionsMenuBtn").click();
-    setTimeout($("div button:contains('Full screen')").click(), 1000);
+    $("div button:contains('Full screen')").click();
 
 }
 
@@ -77,53 +76,73 @@ function startAutoRefresh() {
     
     console.log("Refreshed at " + dateTime);
 
-    pbiAutoRefresh = setTimeout(startAutoRefresh, refreshInterval);   
+    var pbiAutoRefresh = setTimeout(startAutoRefresh, refreshInterval);  
+
+    // send timeout id to background.js as it does not able to persist in content.js
+    chrome.runtime.sendMessage({directive:'refresh-event', timeout_id: pbiAutoRefresh}, function (val) {});
 }
 
 // Stop automatically refreshing 
 function stopRefresh(){
-    clearInterval(pbiAutoRefresh)
+    
+    chrome.runtime.sendMessage({directive:'stop-event'}, function (val) {
+        // retrieve timeout id from background.js
+        console.log("Auto refresh stopped... " + val.timeout_id);
+        clearTimeout(val.timeout_id);
+       
+    });
 }
 
 function saveHandler() {
-    
+   
 
     if ($('#popup-form')[0].checkValidity() === true) {
         var message;
-        var interval = $('#refresh-interval').val();
-        var interval_category = $('#interval-category').val();
-        var interval_in_ms;
-
-        switch(interval_category) {
-            case "seconds": interval_in_ms = parseInt(interval*1000); 
-                            break;
-            case "minutes": interval_in_ms = parseInt(interval*1000*60);
-                            break;
-            case "hours": interval_in_ms = parseInt(interval*1000*60*60);  
-                            break;
-            default:
-                alert("Interval category invalid!");
-        }
 
         if($('#interval-radio').is(':checked')) {
+            var interval = $('#refresh-interval').val();
+            var interval_category = $('#interval-category').val();
+            var interval_in_ms;
+
+            switch(interval_category) {
+                case "seconds": interval_in_ms = parseInt(interval*1000); 
+                                break;
+                case "minutes": interval_in_ms = parseInt(interval*1000*60);
+                                break;
+                case "hours": interval_in_ms = parseInt(interval*1000*60*60);  
+                                break;
+                default:
+                    alert("Interval category invalid!");
+            }
             message = {directive:'save-event', 
                        refreshtype: 'interval', 
                        interval:interval_in_ms,
                        unit:$('#interval-category').val()}
         } else {
         
+            var dateInput = convertToDate($('#time-field').val());
+            var diffMs = dateInput.getTime() - Date.now();
+            var timeInMs;
+            if(diffMs >= 0) {
+                timeInMs = diffMs;
+                
+            }else {
+                dateInput.setDate(dateInput.getDate() + 1);
+                timeInMs = dateInput.getTime() - Date.now();
+        
+            }
+
             message = {directive:'save-event', 
                        refreshtype: 'time', 
-                       time:$('#time-field').val()}
+                       time:timeInMs,
+                       text:$('#time-field').val()}
         }
 
          
         chrome.runtime.sendMessage(message);
     } else {
-        // prevent default behaviour of browser 
+        // prevent default behaviour of browser of closing the popup
         event.preventDefault();
-        //event.stopPropagation();
-        
         $('#popup-form')[0].classList.add('was-validated');
     }
 }
@@ -136,27 +155,14 @@ function refreshHandler() {
 
 }
 
+
 document.addEventListener('DOMContentLoaded', function () {
     
-    // chrome.runtime.sendMessage({directive:'on-load-event'}, function(config) {
-    //     if(config.refreshtype == 'interval') {
-    //         $('#interval-radio').prop('checked', true);
-    //         $('#refresh-interval').val(config.interval);
-    //         $('#interval-category').val(config.unit);
-    //         $('#interval-group').show();
-    //         $('#time-group').hide();
-    //     } else if (config.refreshtype == 'time'){
-    //         $('#time-radio').prop('checked', true);
-    //         $('#time-field').val(config.time);
-    //         $('#time-group').show();
-    //         $('#interval-group').hide();
-    //     }
-    // });
     chrome.runtime.sendMessage({directive:'on-load-event'}, function (config) { 
-        
+        console.log("on-load: " + config.refreshtype);
         if(config.refreshtype == 'interval') {
             $('#interval-radio').prop('checked', true);
-
+    
             $('#interval-category').val(config.unit);
             switch(config.unit) {
                 case "seconds": $('#refresh-interval').val (config.interval/1000); break;
@@ -164,13 +170,14 @@ document.addEventListener('DOMContentLoaded', function () {
                 case "hours": $('#refresh-interval').val(config.interval/(60000*60)); break;
                 default: $('#refresh-interval').val(config.interval); 
             }
-
+    
             $('#interval-group').show();
             $('#time-group').hide();
            
         } else if (config.refreshtype == 'time'){
+            
             $('#time-radio').prop('checked', true);
-            $('#time-field').val(config.time);
+            $('#time-field').val(config.text);
             $('#time-group').show();
             $('#interval-group').hide();
         }else { 
@@ -180,6 +187,7 @@ document.addEventListener('DOMContentLoaded', function () {
         
         
     });
+    
 
     $('#interval-radio').click(function () {
         $('#interval-group').show();
@@ -195,7 +203,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $('#save-button').click(saveHandler);
 
-    $('#stop-button').click(stopRefresh);
+    $("button[name='stop-button']").click(stopRefresh);
 
 
     $('input.timepicker').timepicker({
@@ -211,7 +219,6 @@ document.addEventListener('DOMContentLoaded', function () {
     });
    
 
-    console.log("popup.js add event listener");
 })
 
 
