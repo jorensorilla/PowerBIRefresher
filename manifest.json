@@ -9,14 +9,18 @@
             "js": ["jquery-3.4.1.min.js","content.js"]
         } 
     ],
-    "permissions": ["declarativeContent","tabs","activeTab","webNavigation","storage"],
+    "permissions": ["management","alarms","declarativeContent", "tabs","activeTab", "webNavigation", "storage"],
     "background": {
-      "scripts": ["background.js"]
+      "scripts": ["background.js"],
+      "persistent": true
+    },
+    "options_ui": {
+        "page": "options.html",
+        "open_in_tab": false
     },
     "page_action":{
         "default_title": "Power BI Refresher",
         "browser_style": true,
-        "default_popup":"popup.html",
         "default_icon": {
             "16": "assets/arrow-refresh-icon-16.png",
             "32": "assets/arrow-refresh-icon-32.png",
