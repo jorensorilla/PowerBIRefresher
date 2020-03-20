@@ -1,12 +1,15 @@
 #popup-form {
     width: 450px;
+    height: 400px;
     padding: 10px;
+    position: relative;
 } 
 
 #popup-form button {
+    float: right;
     width: 100px;
+    position: absolute;
+    right: 0;
+    bottom: 0;
 }
 
-#input-group {
-    border: black 1px;
-}

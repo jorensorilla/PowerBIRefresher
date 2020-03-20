@@ -11,18 +11,6 @@
     <body>
           <div class="container p-2">
             <form id="popup-form" class="needs-validation" novalidate>
-                
-                
-                <!-- <div class="row">
-                  <div class="form-group col-12 col-sm-12">
-                    <label for="url">Power BI Report Link</label>
-                    <input type="url" class="form-control" id="url" required>
-                    <div class="invalid-feedback">
-                      Please input a valid URL.
-                    </div>
-                  </div>
-
-                </div> -->
 
                 <div class="row">
                   
@@ -59,7 +47,6 @@
                       <label for="interval-category">Unit</label>
                       <select class="custom-select form-control" id="interval-category" >
                         <option value=""></option>
-                        <!-- <option value="seconds">seconds</option> -->
                         <option value="minutes">minutes</option>
                         <option value="hours">hours</option>
                       </select>
@@ -76,7 +63,7 @@
                   <div class="form-group col-7">
                    
                     <label for="time-field">Refresh Time</label>
-                    <input autocomplete="off" id="time-field" type='text' class="form-control timepicker" />
+                    <input autocomplete="off" id="time-field" type='text' pattern="((([1-9])|(1[0-2])):([0-5])(0|5)\s(A|P)M)" class="form-control timepicker" />
                     <div class="invalid-feedback">
                       Please select a time.
                     </div>

@@ -1,4 +1,8 @@
-
+/**
+ *  Options page for the extension. Used to modify
+ *  the interval of when to refresh the page to 
+ *  either by a set time daily or by minutes/hours.
+ */
 
 function saveHandler() {
    
@@ -96,7 +100,6 @@ document.addEventListener('DOMContentLoaded', function() {
         interval: 60,
         minTime: '6',
         maxTime: '10:00pm',
-        defaultTime: '7',
         startTime: '6:00',
         dynamic: false,
         dropdown: true,

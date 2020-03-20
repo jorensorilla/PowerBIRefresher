@@ -1,7 +1,19 @@
+/**
+ *  Background script of the extension. Receives events from the options.js and content.js.
+ *  Mostly interfaces with the Chrome API
+ * 
+ */
 
-var interval = 120000; // default
 
-// Converts text time in h:mm AM/PM format to Date
+var interval = 120000; // default interval
+
+/** 
+ *  Converts the specified time to a Date object
+ *  @param  {String} time Time in h:mm AM/PM 12 hour format 
+ *  @return {Date}        Current day with the specified time
+ * 
+ */
+
 function convertTimeToDate(time){
     var isPM = time.match('PM')?true:false;
     var timeArr = time.split(':')
@@ -34,9 +46,15 @@ function convertTimeToDate(time){
 
 }
 
-// Calculates the number of milliseconds to the specified time (in h:mm AM/PM format). 
-// If the specified time has already elapsed on the current day, then the number of milliseconds
-// from now to the specified time on the following day will be calculated.
+/**
+ *  Calculates the number of milliseconds from the current time to the specified time 
+ *  @param  {String} time Time in h:mm AM/PM 12 hour format 
+ *  @return {Number}      Number of milliseconds from the current time to the specified time.
+ *                        If the specified time has already elapsed on the current day, then 
+ *                        the number of milliseconds from now to the specified time on the 
+ *                        following day will be calculated.
+ */ 
+
 function calculateTimeInMs (time) {
 
     var dateInput = convertTimeToDate(time);
@@ -53,20 +71,23 @@ function calculateTimeInMs (time) {
     return timeInMs;
 }
 
-// Sends a message to content.js to trigger the refresh routine
+/**
+ *  Sends a message to content.js to trigger the refresh routine
+ * 
+ */
 function triggerRefresh(){
     chrome.tabs.query({ url: "https://app.powerbi.com/groups/me/apps/*"}, function(tabs) {
-        // try {
-            chrome.tabs.sendMessage(tabs[0].id, {directive: "trigger-refresh"});
-        // } catch (exception) {
-        //     console.log("Current tab is invalid!");
-        // }
-        
+        chrome.tabs.sendMessage(tabs[0].id, {directive: "trigger-refresh"});
     });
 }
 
+/**
+ * Updates the interval object
+ * @param {JSON} config JSON containing configuration data from chrome.storage.local
+ */
 
 function updateInterval(config) {
+
     // get interval in milliseconds
     if (config.refreshtype === 'interval') {
         interval = config.interval;
@@ -83,6 +104,10 @@ function updateInterval(config) {
    
 }
 
+/**
+ * Listens to events from options.js and content.js
+ * 
+ */
 chrome.runtime.onMessage.addListener(
     function(request, sender, sendResponse) {
         
@@ -97,7 +122,6 @@ chrome.runtime.onMessage.addListener(
                 }else if (request.refreshtype === 'time') {
                     
                     chrome.storage.local.set({"refreshtype": request.refreshtype});
-                    chrome.storage.local.set({"time":request.time});
                     chrome.storage.local.set({"text":request.text});
 
                 }
@@ -107,13 +131,9 @@ chrome.runtime.onMessage.addListener(
                 sendResponse({}); // sending back empty response to sender
                 break;
             case "get-config":
-                chrome.storage.local.get(['refreshtype','interval','unit', 'time', 'text'], function (config) { 
+                chrome.storage.local.get(['refreshtype','interval','unit', 'text'], function (config) { 
                     sendResponse(config);
                 });
-                break;
-            case "refresh-event":
-                timeout_id=request.timeout_id;
-                sendResponse({});
                 break;
             default:
                 // when request directive doesn't match
@@ -124,22 +144,20 @@ chrome.runtime.onMessage.addListener(
     }
 );
 
-// execute when page loads
+/**
+ *  Event handler for when the page loads. Gets configuration data and sets a new chrome.alarm if necessary.
+ */
 chrome.webNavigation.onCompleted.addListener(function(details) {
-   
-    
-    // if (!is_active) {
-    //     console.log("Clearing interval...");
-    //     //clearInterval(timeout_id);
-    //     chrome.alarms.create("refresh", {when: Date.now() + this.interval });
-    // } 
 
-    chrome.storage.local.get(['refreshtype','interval','unit', 'time', 'text'], function (config) { 
+
+    chrome.storage.local.get(['refreshtype','interval','unit', 'text'], function (config) { 
 
             
             updateInterval(config);
             console.log("Refresh due in " + interval/1000 + " seconds...");
             chrome.alarms.get("refresh", function (alarm) {
+
+                // create alarm if it does not exist yet.
                 if(alarm == null) {
                     chrome.alarms.create("refresh", {when: Date.now() + interval });
                     console.log("Alarm created.");
@@ -156,11 +174,17 @@ chrome.webNavigation.onCompleted.addListener(function(details) {
     }]
 });
 
+/**
+ *  Fires a refresh event to let content.js know when to refresh the page.
+ */
 chrome.alarms.onAlarm.addListener(function(alarm) {
     console.log("refresh triggered");
     triggerRefresh();
 });
 
+/**
+ *  Configures the page action to only activate on the specified pageUrl and scheme
+ */
 chrome.runtime.onInstalled.addListener(function() {
     chrome.declarativeContent.onPageChanged.removeRules(undefined, function() {
       chrome.declarativeContent.onPageChanged.addRules([
